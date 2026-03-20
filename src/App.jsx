@@ -1,13 +1,14 @@
 import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import BgSlideshow from './components/BgSlideshow'
 import MoodSwitcher from './components/MoodSwitcher'
 import FlyingWords from './components/FlyingWords'
 import Timer from './components/Timer'
 import FootballCursor from './components/FootballCursor'
+import Navbar from './components/Navbar'
+import Playfield2 from './components/Playfield2'
 import gojoLogo from './assets/Gojo.jpg'
 
-// ── Mood definitions ─────────────────────────────────────────────
-// Each mood has: a gradient background, an accent color, and a label.
 const MOODS = {
   chill: {
     label: 'Chill 🌊',
@@ -32,13 +33,12 @@ const MOODS = {
   },
 }
 
-export default function App() {
-  // mood is one of: 'chill' | 'dark' | 'hype'
+// ── Home page (your existing content, unchanged) ─
+function Home() {
   const [mood, setMood] = useState('chill')
   const current = MOODS[mood]
+
   return (
-    // The style attribute injects CSS variables so all child components
-    // can reference --accent and --particle without prop-drilling.
     <div
       className="app"
       style={{
@@ -47,17 +47,20 @@ export default function App() {
         '--particle': current.particle,
       }}
     >
-      {/* Scrolling background images */}
-      <BgSlideshow />
+      <div
+        className="app football-cursor-active"
+          style={{
+            backgroundColor: 'transparent',
+            '--accent': current.accent,
+            '--particle': current.particle,
+          }}
+          ></div>
 
-      {/* Flying words live behind everything else */}
+      <BgSlideshow />
       <FlyingWords mood={mood} />
-{/* Snowy football that follows the mouse */}
       <FootballCursor />
-  
 
       <main className="center">
-        {/* ── Header ─────────────────────────── */}
         <header className="header">
           <div className="logo-container">
             <img src={gojoLogo} alt="Gojo Logo" className="logo-img" />
@@ -65,12 +68,22 @@ export default function App() {
           <p className="tagline">{current.tagline}</p>
         </header>
 
-        {/* ── Mood switcher buttons ───────────── */}
         <MoodSwitcher mood={mood} setMood={setMood} moods={MOODS} />
-
-        {/* ── Pomodoro timer ─────────────────── */}
         <Timer accent={current.accent} />
       </main>
     </div>
+  )
+}
+
+// ── Root app — navbar + routes ───────────────────
+export default function App() {
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/"           element={<Home />} />
+        <Route path="/playfield2" element={<Playfield2 />} />
+      </Routes>
+    </>
   )
 }

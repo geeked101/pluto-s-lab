@@ -26,7 +26,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 2.5rem;
-  padding: 3rem 1.5rem 5rem;
+  padding: 5rem 1.5rem 5rem;
   min-height: 100vh;
   position: relative;
   z-index: 2; /* sits above flying words */
@@ -208,7 +208,12 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
 
 /* ── Hide default cursor everywhere ─────────── */
-*, *::before, *::after { cursor: none !important; }
+.football-cursor-active,
+.football-cursor-active *,
+.football-cursor-active *::before,
+.football-cursor-active *::after {
+  cursor: none !important;
+}
 
 /* ── Football ball (Outer container handles follow) ── */
 .football-cursor {
@@ -324,4 +329,366 @@ body {
     rgba(0, 0, 0, 0.35) 50%,
     rgba(0, 0, 0, 0.6)  100%
   );
+}
+/* ── Navbar ─────────────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9998;        /* just below the football cursor (9999) */
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-tab {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.nav-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-tab.active {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ══════════════════════════════════════════════
+   Playfield 2 — Buttermax / Chocolate / Gojo
+══════════════════════════════════════════════ */
+
+/* ── Main container ─────────────────────────── */
+.p2-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: #3d1d0a;   /* rich chocolate brown */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 60px;
+}
+
+/* ── Smudge canvas ──────────────────────────── */
+.smudge-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Gojo image ─────────────────────────────── */
+.gojo-wrapper {
+  position: absolute;
+  right: 8%;
+  bottom: 0;
+  z-index: 2;
+  will-change: transform;
+  animation: gojoFloat 5s ease-in-out infinite;
+}
+
+.gojo-img {
+  height: min(75vh, 600px);
+  width: auto;
+  object-fit: contain;
+  /* Slight vignette at the bottom so Gojo blends into the bg */
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    black 18%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    black 18%,
+    black 100%
+  );
+  filter: drop-shadow(-8px 0 40px rgba(0,0,0,0.5));
+}
+
+@keyframes gojoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+/* ── Hero text ──────────────────────────────── */
+.p2-hero {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* left-aligned like Buttermax */
+  gap: 0.8rem;
+  margin-left: 6%;
+  margin-right: auto;
+  will-change: transform;
+}
+
+.p2-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 220, 180, 0.55);
+}
+
+.p2-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(5.5rem, 15vw, 12rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  color: #fdf0e0;            /* warm cream — pops on chocolate */
+  text-shadow:
+    4px 4px 0px rgba(0,0,0,0.25),
+    0 0 80px rgba(255, 200, 120, 0.15);
+  cursor: default;
+  user-select: none;
+  will-change: transform;
+}
+
+.p2-sub {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255, 220, 180, 0.4);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+
+.p2-line {
+  width: 90px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 200, 120, 0.8),
+    transparent
+  );
+  transform-origin: left;
+  margin-top: 0.4rem;
+}
+
+/* ── Restore cursor on Playfield 2 ─────────── */
+.p2-container,
+.p2-container * {
+  cursor: none !important;  /* smudge IS the cursor here */
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 680px) {
+  .gojo-wrapper {
+    right: 50%;
+    transform: translateX(50%);
+    opacity: 0.25;
+    bottom: 0;
+  }
+
+  .p2-hero {
+    align-items: center;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .p2-line {
+    margin: 0.4rem auto 0;
+  }
+}
+
+/* ── Main container ─────────────────────────── */
+.p2-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: radial-gradient(ellipse at 60% 40%, #0d0d2b 0%, #050510 60%, #000000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 60px;   /* clear the navbar */
+}
+
+/* ── Starfield ──────────────────────────────── */
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.7;
+  animation: twinkle ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 0.2; transform: scale(0.5); }
+}
+
+/* ── Planet wrapper (parallax target) ──────── */
+.planet-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 12%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+/* ── Pluto planet div ───────────────────────── */
+.pluto-planet {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  position: relative;
+  /* Base planet color — icy blue-grey like real Pluto */
+  background: radial-gradient(circle at 35% 35%,
+    #c8d8e8 0%,
+    #8899aa 30%,
+    #556677 60%,
+    #2a3a4a 85%,
+    #111820 100%
+  );
+  box-shadow:
+    0 0 60px rgba(100, 140, 200, 0.25),   /* outer glow */
+    0 0 120px rgba(80, 120, 180, 0.12),
+    inset -30px -20px 50px rgba(0,0,0,0.6); /* inner shadow for depth */
+  animation: planetFloat 6s ease-in-out infinite;
+}
+
+/* Surface texture — subtle banding like Pluto's heart region */
+.planet-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 60% 30% at 55% 65%,
+      rgba(210, 190, 170, 0.35) 0%,
+      transparent 70%
+    );
+}
+
+/* Highlight — simulates sunlight catching the top-left */
+.planet-highlight {
+  position: absolute;
+  top: 12%;
+  left: 15%;
+  width: 35%;
+  height: 25%;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 70%
+  );
+}
+
+/* Shadow — dark edge on the right side */
+.planet-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 72% 55%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+/* Float up and down continuously */
+@keyframes planetFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(2deg); }
+}
+
+/* ── Hero text ──────────────────────────────── */
+.p2-hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  /* Shift left slightly so PLUTO + planet feel balanced */
+  margin-right: 18%;
+}
+
+.p2-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(160, 180, 220, 0.55);
+}
+
+.p2-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(5rem, 14vw, 11rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: #fff;
+  /* Default soft glow */
+  text-shadow:
+    0 0 40px rgba(140, 170, 255, 0.5),
+    0 0 80px rgba(100, 140, 255, 0.25);
+  cursor: default;
+  user-select: none;
+}
+
+.p2-sub {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(200, 210, 240, 0.45);
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+}
+
+/* Decorative horizontal line under subtitle */
+.p2-line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(140, 170, 255, 0.7),
+    transparent
+  );
+  transform-origin: left;
+  margin-top: 0.5rem;
+}
+
+/* ── Responsive — stack on small screens ────── */
+@media (max-width: 680px) {
+  .planet-wrapper {
+    top: 15%;
+    right: 50%;
+    transform: translateX(50%);
+    opacity: 0.4;   /* fade planet back on mobile so text stays readable */
+  }
+
+  .p2-hero { margin-right: 0; }
+
+  .pluto-planet {
+    width: 150px;
+    height: 150px;
+  }
 }
