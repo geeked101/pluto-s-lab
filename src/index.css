@@ -369,18 +369,118 @@ body {
 }
 
 /* ══════════════════════════════════════════════
-   Playfield 2 — Buttermax / Chocolate / Gojo
+   The Void — 3D Scene Page
 ══════════════════════════════════════════════ */
+
+.void-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+  padding-top: 60px;
+}
+
+/* Three.js canvas fills the whole container */
+.void-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* UI overlay — sits on top of the 3D scene */
+.void-ui {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.void-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-shadow:
+    0 0 40px rgba(155, 93, 229, 0.8),
+    0 0 80px rgba(155, 93, 229, 0.4);
+  line-height: 1;
+}
+
+.void-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 0.6rem;
+}
+
+/* ══════════════════════════════════════════════
+   Glitch Page Transition
+══════════════════════════════════════════════ */
+
+.page-transition {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* RGB split ghost layers */
+.glitch-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0;
+  animation: glitchFire 0.45s ease-out forwards;
+}
+
+/* Red channel — offset left */
+.glitch-r {
+  background: rgba(255, 0, 60, 0.12);
+  mix-blend-mode: screen;
+  animation-name: glitchR;
+}
+
+/* Blue channel — offset right */
+.glitch-b {
+  background: rgba(0, 200, 255, 0.12);
+  mix-blend-mode: screen;
+  animation-name: glitchB;
+}
+
+@keyframes glitchR {
+  0%   { opacity: 1; transform: translateX(-6px) skewX(-2deg); clip-path: inset(20% 0 60% 0); }
+  25%  { opacity: 0.8; transform: translateX(4px)  skewX(1deg);  clip-path: inset(60% 0 10% 0); }
+  50%  { opacity: 0.6; transform: translateX(-3px) skewX(-1deg); clip-path: inset(40% 0 30% 0); }
+  100% { opacity: 0; transform: translateX(0);                   clip-path: inset(0% 0 0% 0); }
+}
+
+@keyframes glitchB {
+  0%   { opacity: 1; transform: translateX(6px)  skewX(2deg);  clip-path: inset(50% 0 20% 0); }
+  25%  { opacity: 0.8; transform: translateX(-4px) skewX(-1deg); clip-path: inset(10% 0 70% 0); }
+  50%  { opacity: 0.6; transform: translateX(3px)  skewX(1deg);  clip-path: inset(70% 0 5%  0); }
+  100% { opacity: 0; transform: translateX(0);                   clip-path: inset(0% 0 0%  0); }
+}
+
+/* ══════════════════════════════════════════════
+   Playfield 2 — Chocolate / Pluto / Oops
+══════════════════════════════════════════════ */
+
+.p2-container,
+.p2-container * { cursor: none !important; }
 
 /* ── Main container ─────────────────────────── */
 .p2-container {
   position: relative;
-  min-height: 100vh;
   width: 100%;
-  background: #3d1d0a;   /* rich chocolate brown */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #3d1d0a;
   overflow: hidden;
   padding-top: 60px;
 }
@@ -393,34 +493,26 @@ body {
   z-index: 1;
 }
 
-/* ── Gojo image ─────────────────────────────── */
+/* ── Hero section ───────────────────────────── */
 .gojo-wrapper {
   position: absolute;
   right: 8%;
+  top: 60px;
   bottom: 0;
   z-index: 2;
-  will-change: transform;
+  width: clamp(220px, 28vw, 400px);
   animation: gojoFloat 5s ease-in-out infinite;
 }
 
 .gojo-img {
-  height: min(75vh, 600px);
-  width: auto;
-  object-fit: contain;
-  /* Slight vignette at the bottom so Gojo blends into the bg */
-  -webkit-mask-image: linear-gradient(
-    to top,
-    transparent 0%,
-    black 18%,
-    black 100%
-  );
-  mask-image: linear-gradient(
-    to top,
-    transparent 0%,
-    black 18%,
-    black 100%
-  );
-  filter: drop-shadow(-8px 0 40px rgba(0,0,0,0.5));
+  width: 100%;
+  height: auto;
+  display: block;
+  mix-blend-mode: luminosity;
+  opacity: 0.92;
+  filter: contrast(1.05) brightness(0.95);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 22%, black 100%);
+  mask-image: linear-gradient(to top, transparent 0%, black 22%, black 100%);
 }
 
 @keyframes gojoFloat {
@@ -428,47 +520,46 @@ body {
   50%       { transform: translateY(-14px); }
 }
 
-/* ── Hero text ──────────────────────────────── */
 .p2-hero {
   position: relative;
   z-index: 3;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;   /* left-aligned like Buttermax */
+  align-items: flex-start;
+  justify-content: center;
   gap: 0.8rem;
-  margin-left: 6%;
-  margin-right: auto;
-  will-change: transform;
+  padding-left: 6vw;
+  width: 100%;
+  max-width: 700px;
 }
 
 .p2-label {
   font-family: 'Space Mono', monospace;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 220, 180, 0.55);
+  color: rgba(255, 220, 180, 0.5);
 }
 
 .p2-title {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(5.5rem, 15vw, 12rem);
+  font-size: clamp(5.5rem, 16vw, 13rem);
   font-weight: 800;
   line-height: 0.88;
   letter-spacing: -0.04em;
-  color: #fdf0e0;            /* warm cream — pops on chocolate */
+  color: #f5e6d0;
   text-shadow:
     4px 4px 0px rgba(0,0,0,0.25),
-    0 0 80px rgba(255, 200, 120, 0.15);
-  cursor: default;
+    0 0 80px rgba(255, 200, 120, 0.2);
+  cursor: none;
   user-select: none;
-  will-change: transform;
 }
 
 .p2-sub {
   font-family: 'Syne', sans-serif;
   font-size: 0.95rem;
-  font-weight: 400;
-  color: rgba(255, 220, 180, 0.4);
+  color: rgba(245, 220, 190, 0.45);
   letter-spacing: 0.08em;
   text-transform: lowercase;
 }
@@ -476,219 +567,225 @@ body {
 .p2-line {
   width: 90px;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 200, 120, 0.8),
-    transparent
-  );
+  background: linear-gradient(90deg, rgba(245,200,140,0.8), transparent);
   transform-origin: left;
   margin-top: 0.4rem;
 }
 
-/* ── Restore cursor on Playfield 2 ─────────── */
-.p2-container,
-.p2-container * {
-  cursor: none !important;  /* smudge IS the cursor here */
+/* ══════════════════════════════════════════════
+   Oops Section
+══════════════════════════════════════════════ */
+
+.oops-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a0a03;    /* slightly darker chocolate for contrast */
+  overflow: hidden;
+}
+
+/* Giant "oops!" sits behind the image */
+.oops-text-bg {
+  position: absolute;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(7rem, 20vw, 18rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: rgba(245, 220, 190, 0.08);   /* very faint — depth layer */
+  user-select: none;
+  z-index: 1;
+  /* Slight text stroke so it reads as an outline at large size */
+  -webkit-text-stroke: 1px rgba(245, 220, 190, 0.15);
+}
+
+/* Gojo bomb image sits in front of the text */
+.oops-image-front {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── GojoBomb component ─────────────────────── */
+.gojo-bomb-wrapper {
+  position: relative;
+  width: 400px;
+  height: 500px;
+  cursor: none !important;
+}
+
+/* Hidden source image for pixel sampling — invisible */
+.gojo-bomb-source {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 400px;
+  height: 500px;
+  object-fit: cover;
+}
+
+/* Visible Gojo image */
+.gojo-bomb-img {
+  width: 400px;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+  border-radius: 4px;
+  filter: contrast(1.05) brightness(0.9);
+  /* Fade bottom into section bg */
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 18%, black 100%);
+  mask-image: linear-gradient(to top, transparent 0%, black 18%, black 100%);
+  transition: opacity 0.3s ease;
+}
+
+/* On hover, image fades out as particles take over */
+.gojo-bomb-wrapper:hover .gojo-bomb-img {
+  opacity: 0.15;
+}
+
+/* Particle canvas — overlays the image exactly */
+.gojo-bomb-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Oops caption ───────────────────────────── */
+.oops-caption {
+  position: absolute;
+  bottom: 3rem;
+  left: 5vw;
+  z-index: 4;
+}
+
+.oops-caption-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245, 200, 140, 0.4);
+  margin-bottom: 0.5rem;
+}
+
+.oops-caption-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(245, 220, 190, 0.75);
+  line-height: 1.5;
 }
 
 /* ── Responsive ─────────────────────────────── */
 @media (max-width: 680px) {
-  .gojo-wrapper {
-    right: 50%;
-    transform: translateX(50%);
-    opacity: 0.25;
-    bottom: 0;
-  }
+  .gojo-wrapper   { right: 0; width: 55vw; opacity: 0.3; }
+  .p2-hero        { padding-left: 4vw; }
+  .gojo-bomb-wrapper,
+  .gojo-bomb-source,
+  .gojo-bomb-img  { width: 280px; height: 360px; }
+  .gojo-bomb-canvas { width: 280px; height: 360px; }
+}
+/* ══════════════════════════════════════════════
+   The Void — Section 2 Video
+══════════════════════════════════════════════ */
 
-  .p2-hero {
-    align-items: center;
-    margin-left: 0;
-    text-align: center;
-  }
-
-  .p2-line {
-    margin: 0.4rem auto 0;
-  }
+/* Wrapper for both sections */
+.void-page {
+  width: 100%;
 }
 
-/* ── Main container ─────────────────────────── */
-.p2-container {
+/* ── Scroll arrow ───────────────────────────── */
+.void-scroll-arrow {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 1.5rem;
+  animation: arrowBounce 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 0.35; }
+  50%       { transform: translateX(-50%) translateY(10px); opacity: 0.8;  }
+}
+
+/* ── Video section ──────────────────────────── */
+.void-video-section {
   position: relative;
-  min-height: 100vh;
   width: 100%;
-  background: radial-gradient(ellipse at 60% 40%, #0d0d2b 0%, #050510 60%, #000000 100%);
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  padding-top: 60px;   /* clear the navbar */
 }
 
-/* ── Starfield ──────────────────────────────── */
-.starfield {
+/* Video fills the section like a bg image */
+.void-video-bg {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* crops to fill, never stretches */
   z-index: 0;
 }
 
-.star {
+/* Dark gradient overlay — top and bottom darker, middle clearer */
+.void-video-overlay {
   position: absolute;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0.7;
-  animation: twinkle ease-in-out infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50%       { opacity: 0.2; transform: scale(0.5); }
-}
-
-/* ── Planet wrapper (parallax target) ──────── */
-.planet-wrapper {
-  position: absolute;
-  top: 50%;
-  right: 12%;
-  transform: translateY(-50%);
+  inset: 0;
   z-index: 1;
-}
-
-/* ── Pluto planet div ───────────────────────── */
-.pluto-planet {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  position: relative;
-  /* Base planet color — icy blue-grey like real Pluto */
-  background: radial-gradient(circle at 35% 35%,
-    #c8d8e8 0%,
-    #8899aa 30%,
-    #556677 60%,
-    #2a3a4a 85%,
-    #111820 100%
-  );
-  box-shadow:
-    0 0 60px rgba(100, 140, 200, 0.25),   /* outer glow */
-    0 0 120px rgba(80, 120, 180, 0.12),
-    inset -30px -20px 50px rgba(0,0,0,0.6); /* inner shadow for depth */
-  animation: planetFloat 6s ease-in-out infinite;
-}
-
-/* Surface texture — subtle banding like Pluto's heart region */
-.planet-surface {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse 60% 30% at 55% 65%,
-      rgba(210, 190, 170, 0.35) 0%,
-      transparent 70%
-    );
-}
-
-/* Highlight — simulates sunlight catching the top-left */
-.planet-highlight {
-  position: absolute;
-  top: 12%;
-  left: 15%;
-  width: 35%;
-  height: 25%;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255, 255, 255, 0.18) 0%,
-    transparent 70%
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.35) 40%,
+    rgba(0, 0, 0, 0.35) 60%,
+    rgba(0, 0, 0, 0.85) 100%
   );
 }
 
-/* Shadow — dark edge on the right side */
-.planet-shadow {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 72% 55%,
-    transparent 40%,
-    rgba(0, 0, 0, 0.55) 100%
-  );
-}
-
-/* Float up and down continuously */
-@keyframes planetFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50%       { transform: translateY(-18px) rotate(2deg); }
-}
-
-/* ── Hero text ──────────────────────────────── */
-.p2-hero {
+/* Text content sits above video + overlay */
+.void-video-content {
   position: relative;
   z-index: 2;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 1rem;
-  /* Shift left slightly so PLUTO + planet feel balanced */
-  margin-right: 18%;
+  gap: 1.2rem;
+  padding: 0 2rem;
 }
 
-.p2-label {
+.void-video-label {
   font-family: 'Space Mono', monospace;
   font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(160, 180, 220, 0.55);
+  color: rgba(155, 93, 229, 0.8);
 }
 
-.p2-title {
+.void-video-title {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(5rem, 14vw, 11rem);
+  font-size: clamp(4rem, 12vw, 10rem);
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.04em;
   color: #fff;
-  /* Default soft glow */
   text-shadow:
-    0 0 40px rgba(140, 170, 255, 0.5),
-    0 0 80px rgba(100, 140, 255, 0.25);
-  cursor: default;
+    0 0 60px rgba(155, 93, 229, 0.7),
+    0 0 120px rgba(155, 93, 229, 0.3);
   user-select: none;
 }
 
-.p2-sub {
+.void-video-sub {
   font-family: 'Syne', sans-serif;
   font-size: 1rem;
-  font-weight: 400;
-  color: rgba(200, 210, 240, 0.45);
-  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.08em;
   text-transform: lowercase;
-}
-
-/* Decorative horizontal line under subtitle */
-.p2-line {
-  width: 80px;
-  height: 2px;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(140, 170, 255, 0.7),
-    transparent
-  );
-  transform-origin: left;
-  margin-top: 0.5rem;
-}
-
-/* ── Responsive — stack on small screens ────── */
-@media (max-width: 680px) {
-  .planet-wrapper {
-    top: 15%;
-    right: 50%;
-    transform: translateX(50%);
-    opacity: 0.4;   /* fade planet back on mobile so text stays readable */
-  }
-
-  .p2-hero { margin-right: 0; }
-
-  .pluto-planet {
-    width: 150px;
-    height: 150px;
-  }
 }
