@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { usePointerCoarse } from './hooks/usePointerCoarse'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import BgSlideshow from './components/BgSlideshow'
@@ -40,11 +41,12 @@ const MOODS = {
 function Home() {
   const [mood, setMood] = useState('chill')
   const current = MOODS[mood]
+  const pointerCoarse = usePointerCoarse()
 
   return (
     <PageTransition>
       <div
-        className="app football-cursor-active"
+        className={pointerCoarse ? 'app' : 'app football-cursor-active'}
         style={{
           backgroundColor: 'transparent',
           '--accent': current.accent,
@@ -53,7 +55,7 @@ function Home() {
       >
         <BgSlideshow />
         <FlyingWords mood={mood} />
-        <FootballCursor />
+        {!pointerCoarse && <FootballCursor />}
 
         <main className="center">
           <header className="header">

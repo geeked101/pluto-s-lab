@@ -116,7 +116,7 @@ export default function TheVoid() {
       // Clamp so you don't fly too far
       targetZ = Math.max(-30, Math.min(20, targetZ))
     }
-    mount.addEventListener('wheel', onScroll)
+    mount.addEventListener('wheel', onScroll, { passive: true })
 
     // ── Click handler — explode / reset ─────────
     const onClick = () => {
@@ -164,15 +164,20 @@ export default function TheVoid() {
     const onResize = () => {
       const W = mount.clientWidth
       const H = mount.clientHeight
+      if (W === 0 || H === 0) return
       camera.aspect = W / H
       camera.updateProjectionMatrix()
       renderer.setSize(W, H)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     }
     window.addEventListener('resize', onResize)
+    const resizeObserver = new ResizeObserver(onResize)
+    resizeObserver.observe(mount)
 
     // ── Cleanup on unmount ──────────────────────
     return () => {
       cancelAnimationFrame(frame)
+      resizeObserver.disconnect()
       mount.removeEventListener('wheel', onScroll)
       mount.removeEventListener('click', onClick)
       window.removeEventListener('resize', onResize)

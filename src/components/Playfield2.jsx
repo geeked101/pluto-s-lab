@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -80,18 +80,34 @@ function SmudgeCanvas() {
 
 // ── Particle Explode on Hover ────────────────────
 function GojoBomb() {
+  const wrapRef    = useRef(null)
   const canvasRef  = useRef(null)
   const particles  = useRef([])
   const exploded   = useRef(false)
   const rafId      = useRef(null)
   const imgRef     = useRef(null)
+  const [canvasSize, setCanvasSize] = useState({ w: 400, h: 500 })
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const sync = () => {
+      const w = Math.max(1, Math.floor(el.clientWidth))
+      const h = Math.max(1, Math.floor(el.clientHeight))
+      setCanvasSize({ w, h })
+    }
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   // Spawn particles sampled from the image pixels
   const spawnParticles = () => {
     const canvas = canvasRef.current
     const ctx    = canvas.getContext('2d')
     const img    = imgRef.current
-    if (!img || exploded.current) return
+    if (!img || !canvas || exploded.current) return
     exploded.current = true
 
     // Draw image to canvas so we can sample pixel colors
@@ -161,9 +177,12 @@ function GojoBomb() {
 
   return (
     <div
+      ref={wrapRef}
       className="gojo-bomb-wrapper"
       onMouseEnter={spawnParticles}
       onMouseLeave={resetParticles}
+      onTouchStart={spawnParticles}
+      onTouchEnd={resetParticles}
     >
       {/* Hidden img used to sample pixel colors */}
       <img
@@ -179,12 +198,12 @@ function GojoBomb() {
         alt="Gojo"
         className="gojo-bomb-img"
       />
-      {/* Particle canvas overlay */}
+      {/* Particle canvas overlay — bitmap matches layout size */}
       <canvas
         ref={canvasRef}
         className="gojo-bomb-canvas"
-        width={400}
-        height={500}
+        width={canvasSize.w}
+        height={canvasSize.h}
       />
     </div>
   )
@@ -193,15 +212,27 @@ function GojoBomb() {
 // ── Main Playfield2 ──────────────────────────────
 export default function Playfield2() {
   const containerRef = useRef(null)
+  const [win, setWin] = useState(() => ({
+    w: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    h: typeof window !== 'undefined' ? window.innerHeight : 800,
+  }))
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
   const springConfig = { stiffness: 60, damping: 20, mass: 1 }
   const x = useSpring(rawX, springConfig)
   const y = useSpring(rawY, springConfig)
-  const textX = useTransform(x, [0, window.innerWidth],  [-18, 18])
-  const textY = useTransform(y, [0, window.innerHeight], [-10, 10])
-  const gojoX = useTransform(x, [0, window.innerWidth],  [12, -12])
-  const gojoY = useTransform(y, [0, window.innerHeight], [8,  -8])
+  const textX = useTransform(x, [0, win.w], [-18, 18])
+  const textY = useTransform(y, [0, win.h], [-10, 10])
+  const gojoX = useTransform(x, [0, win.w], [12, -12])
+  const gojoY = useTransform(y, [0, win.h], [8, -8])
+
+  useEffect(() => {
+    const onResize = () =>
+      setWin({ w: window.innerWidth, h: window.innerHeight })
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Init AOS on mount
   useEffect(() => {

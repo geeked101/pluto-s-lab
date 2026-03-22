@@ -10,11 +10,15 @@ const WORD_BANKS = {
 // Each word gets a unique id, a random x position, and a random word
 function createWord(mood) {
   const bank = WORD_BANKS[mood]
+  const narrow = typeof window !== 'undefined' && window.innerWidth <= 768
+  // On narrow screens keep words away from edges so text doesn’t clip horizontally
+  const xMin = narrow ? 8 : 2
+  const xSpan = narrow ? 84 : 90
   return {
     id: Date.now() + Math.random(),                    // unique key
     text: bank[Math.floor(Math.random() * bank.length)],
-    x: Math.random() * 90 + 2,                         // 2% – 92% across screen
-    size: Math.random() * 14 + 12,                      // font-size: 12px – 26px
+    x: Math.random() * xSpan + xMin,
+    size: Math.random() * (narrow ? 10 : 14) + (narrow ? 10 : 12), // slightly smaller on mobile
     duration: Math.random() * 2 + 3,                    // animation: 3s – 5s
   }
 }

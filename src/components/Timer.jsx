@@ -53,7 +53,7 @@ export default function Timer({ accent }) {
 
       {/* SVG progress ring */}
       <div className="timer-ring-wrapper">
-        <svg width="140" height="140" viewBox="0 0 140 140">
+        <svg className="timer-ring-svg" width="140" height="140" viewBox="0 0 140 140" aria-hidden>
           {/* Background track */}
           <circle cx="70" cy="70" r={RADIUS} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
           {/* Animated progress arc */}
